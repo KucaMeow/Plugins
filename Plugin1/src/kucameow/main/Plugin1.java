@@ -16,6 +16,7 @@ public class Plugin1 extends JavaPlugin {
         log.warning("Brevnishko was here");
         log.severe("And saw it");
         log.info("======================");
+        getCommand("givealmazi").setExecutor(new GoAway(this));
     }
     public void onDisable(){
         log.info("Test stopped");
