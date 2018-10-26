@@ -15,9 +15,13 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RegionHandler implements Listener {
+
+    public static Map<Player, Area> areas = new HashMap<>();
 
     private Plugin1 plugin;
 
@@ -25,90 +29,26 @@ public class RegionHandler implements Listener {
         this.plugin = pl;
     }
 
-    //private File regionsFile = new File(pl.getDataFolder() + File.separator + "regions.yml");
-    //private FileConfiguration regions = YamlConfiguration.loadConfiguration(regionsFile);
-
-
     private void saveCoor(PlayerInteractEvent e, Location loc, boolean first){
-        FileConfiguration playerCoord = YamlConfiguration.loadConfiguration(plugin.playersF);
-        //Init string and file
-        List<String> list;
+        Area a;
+        a = areas.get(e.getPlayer());
 
-        if(!playerCoord.contains("players." + e.getPlayer().getName() + ".x")){
-            list = playerCoord.getStringList("players");
-            if(list == null){
-                list = new ArrayList<>();
-                list.add(e.getPlayer().getName());
-                playerCoord.set("players", list);
-                try {
-                    playerCoord.save(plugin.playersF);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            list = playerCoord.getStringList("players." + e.getPlayer().getName());
-            if(list == null){
-                list = new ArrayList<String>();
-                list.add("x");
-                list.add("y");
-                list.add("z");
-                playerCoord.set("players" + e.getPlayer().getName(), list);
-                try {
-                    playerCoord.save(plugin.playersF);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            list = new ArrayList<String>();
-            list.add("0");
-            list.add("0");
-            playerCoord.set("players." + e.getPlayer().getName() + ".x", list);
-            try {
-                playerCoord.save(plugin.playersF);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            playerCoord.set("players." + e.getPlayer().getName() + ".y", list);
-            try {
-                playerCoord.save(plugin.playersF);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            playerCoord.set("players." + e.getPlayer().getName() + ".z", list);
-            try {
-                playerCoord.save(plugin.playersF);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+        if(a == null){
+            e.getPlayer().sendMessage("Ошибка выделения территории. Перезайди на сервер");
+            return;
         }
 
-        list = playerCoord.getStringList("players." + e.getPlayer().getName() + ".x");
-        if(first) list.set(0, Integer.toString((int)loc.getX()));
-        else list.set(1, Integer.toString((int)loc.getX()));
-        playerCoord.set("players." + e.getPlayer().getName() + ".x", list);
-        try {
-            playerCoord.save(plugin.playersF);
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        if(first){
+            a.setX1((int)loc.getX());
+            a.setY1((int)loc.getY());
+            a.setZ1((int)loc.getZ());
         }
-        list = playerCoord.getStringList("players." + e.getPlayer().getName() + ".y");
-        if(first) list.set(0, Integer.toString((int)loc.getY()));
-        else list.set(1, Integer.toString((int)loc.getY()));
-        playerCoord.set("players." + e.getPlayer().getName() + ".y", list);
-        try {
-            playerCoord.save(plugin.playersF);
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        else {
+            a.setX2((int)loc.getX());
+            a.setY2((int)loc.getY());
+            a.setZ2((int)loc.getZ());
         }
-        list = playerCoord.getStringList("players." + e.getPlayer().getName() + ".z");
-        if(first) list.set(0, Integer.toString((int)loc.getZ()));
-        else list.set(1, Integer.toString((int)loc.getZ()));
-        playerCoord.set("players." + e.getPlayer().getName() + ".z", list);
-        try {
-            playerCoord.save(plugin.playersF);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
+        areas.replace(e.getPlayer(), a);
     }
 
     private String writeC(Location loc){
@@ -118,37 +58,20 @@ public class RegionHandler implements Listener {
     }
 
     private String writeC(Player p, boolean first){
-
-        String name = p.getName();
-        FileConfiguration playerCoord = YamlConfiguration.loadConfiguration(plugin.playersF);
-        List<String> user = playerCoord.getStringList("players." + name + ".x");
-        int x1 = Integer.parseInt(user.get(0)), x2 = Integer.parseInt(user.get(1));
-        user = playerCoord.getStringList("players." + name + ".y");
-        int y1 = Integer.parseInt(user.get(0)), y2 = Integer.parseInt(user.get(1));
-        user = playerCoord.getStringList("players." + name + ".z");
-        int z1 = Integer.parseInt(user.get(0)), z2 = Integer.parseInt(user.get(1));
-
+        Area a = areas.get(p);
         if(first)
-            return  "\nX: " + x1 +
-                    "\nY: " + y1 +
-                    "\nZ: " + z1;
+            return  "\nX: " + a.getX1() +
+                    "\nY: " + a.getY1() +
+                    "\nZ: " + a.getZ1();
         else
-            return  "\nX: " + x2 +
-                    "\nY: " + y2 +
-                    "\nZ: " + z2;
+            return  "\nX: " + a.getX2() +
+                    "\nY: " + a.getY2() +
+                    "\nZ: " + a.getZ2();
     }
 
     private String coorSum(Player player){
-        FileConfiguration playerCoord = YamlConfiguration.loadConfiguration(plugin.playersF);
-
-        List<String> user = playerCoord.getStringList("players." + player.getName() + ".x");
-        int x1 = Integer.parseInt(user.get(0)), x2 = Integer.parseInt(user.get(1));
-        user = playerCoord.getStringList("players." + player.getName() + ".y");
-        int y1 = Integer.parseInt(user.get(0)), y2 = Integer.parseInt(user.get(1));
-        user = playerCoord.getStringList("players." + player.getName() + ".z");
-        int z1 = Integer.parseInt(user.get(0)), z2 = Integer.parseInt(user.get(1));
-
-        return Integer.toString((Math.abs(x1 - x2) + 1) * (Math.abs(y1 - y2) + 1) * (Math.abs(z1 - z2) + 1));
+        Area a = areas.get(player);
+        return Integer.toString((Math.abs(a.getX1() - a.getX2()) + 1) * (Math.abs(a.getY1() - a.getY2()) + 1) * (Math.abs(a.getZ1() - a.getZ2()) + 1));
     }
 
     //Getting positions
@@ -195,26 +118,18 @@ public class RegionHandler implements Listener {
     }
 
     private boolean checkRegion(Block block, Player p){
-        //String name = p.getName();
         FileConfiguration r = YamlConfiguration.loadConfiguration(plugin.regionsF);
-
         boolean out = false;
 
-        List<String> regs = r.getStringList("Regions");
+        List<String> regs = r.getStringList("name");
         for (String s : regs){
-            List<String> c = r.getStringList("Regions." + s);
+            //p.sendMessage(s);
+            List<String> c = r.getStringList("reg." + s);
             out = out || block.getX() >= Math.min(Integer.parseInt(c.get(0)),Integer.parseInt(c.get(1))) && block.getX() <= Math.max(Integer.parseInt(c.get(0)),Integer.parseInt(c.get(1)))
                     &&
                          block.getZ() >= Math.min(Integer.parseInt(c.get(4)),Integer.parseInt(c.get(5))) && block.getZ() <= Math.max(Integer.parseInt(c.get(4)),Integer.parseInt(c.get(5)));
         }
-
-//        FileConfiguration playerCoord = YamlConfiguration.loadConfiguration(plugin.playersF);
-//        List<String> user = playerCoord.getStringList("players." + name + ".x");
-//        int x1 = Integer.parseInt(user.get(0)), x2 = Integer.parseInt(user.get(1));
-//        user = playerCoord.getStringList("players." + name + ".y");
-//        int y1 = Integer.parseInt(user.get(0)), y2 = Integer.parseInt(user.get(1));
-//        user = playerCoord.getStringList("players." + name + ".z");
-//        int z1 = Integer.parseInt(user.get(0)), z2 = Integer.parseInt(user.get(1));
+        if(p.hasPermission("cr.break")) return false;
         return out;
     }
 
@@ -223,14 +138,12 @@ public class RegionHandler implements Listener {
     public void firstSave(BlockBreakEvent ev){
         if(!checkRegion(ev.getBlock(), ev.getPlayer())) return;
         Player p = ev.getPlayer();
-        if(!p.hasPermission("test")) return;
         ev.setCancelled(true);
     }
     @EventHandler
     public void secondSave(PlayerInteractEvent ev){
         if(!checkRegion(ev.getClickedBlock(), ev.getPlayer())) return;
         Player p = ev.getPlayer();
-        if(!p.hasPermission("test")) return;
         if(ev.getAction() == Action.PHYSICAL && ev.getClickedBlock().getType() == Material.SOIL){
             ev.setCancelled(true);
         }
@@ -239,7 +152,15 @@ public class RegionHandler implements Listener {
     public void thirdSave(BlockPlaceEvent ev){
         if(!checkRegion(ev.getBlock(), ev.getPlayer())) return;
         Player p = ev.getPlayer();
-        if(!p.hasPermission("test")) return;
         ev.setCancelled(true);
     }
+
+    //Join\leave areas clearing
+    @EventHandler void playerJoin(PlayerJoinEvent e){
+        areas.put(e.getPlayer(), new Area(0,0,0,0,0,0));
+    }
+    @EventHandler void playerJoin(PlayerQuitEvent e){
+        areas.remove(e.getPlayer());
+    }
+
 }
