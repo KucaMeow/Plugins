@@ -195,19 +195,27 @@ public class RegionHandler implements Listener {
     }
 
     private boolean checkRegion(Block block, Player p){
-        String name = p.getName();
-        FileConfiguration playerCoord = YamlConfiguration.loadConfiguration(plugin.playersF);
-        List<String> user = playerCoord.getStringList("players." + name + ".x");
-        int x1 = Integer.parseInt(user.get(0)), x2 = Integer.parseInt(user.get(1));
-        user = playerCoord.getStringList("players." + name + ".y");
-        int y1 = Integer.parseInt(user.get(0)), y2 = Integer.parseInt(user.get(1));
-        user = playerCoord.getStringList("players." + name + ".z");
-        int z1 = Integer.parseInt(user.get(0)), z2 = Integer.parseInt(user.get(1));
-        return block.getX() >= Math.min(x1, x2) && block.getX() <= Math.max(x1, x2)
-                &&
-                //block.getY() >= Math.min(y1, y2) && block.getY() <= Math.max(y1, y2)
-                //&&
-                block.getZ() >= Math.min(z1, z2) && block.getZ() <= Math.max(z1, z2);
+        //String name = p.getName();
+        FileConfiguration r = YamlConfiguration.loadConfiguration(plugin.regionsF);
+
+        boolean out = false;
+
+        List<String> regs = r.getStringList("Regions");
+        for (String s : regs){
+            List<String> c = r.getStringList("Regions." + s);
+            out = out || block.getX() >= Math.min(Integer.parseInt(c.get(0)),Integer.parseInt(c.get(1))) && block.getX() <= Math.max(Integer.parseInt(c.get(0)),Integer.parseInt(c.get(1)))
+                    &&
+                         block.getZ() >= Math.min(Integer.parseInt(c.get(4)),Integer.parseInt(c.get(5))) && block.getZ() <= Math.max(Integer.parseInt(c.get(4)),Integer.parseInt(c.get(5)));
+        }
+
+//        FileConfiguration playerCoord = YamlConfiguration.loadConfiguration(plugin.playersF);
+//        List<String> user = playerCoord.getStringList("players." + name + ".x");
+//        int x1 = Integer.parseInt(user.get(0)), x2 = Integer.parseInt(user.get(1));
+//        user = playerCoord.getStringList("players." + name + ".y");
+//        int y1 = Integer.parseInt(user.get(0)), y2 = Integer.parseInt(user.get(1));
+//        user = playerCoord.getStringList("players." + name + ".z");
+//        int z1 = Integer.parseInt(user.get(0)), z2 = Integer.parseInt(user.get(1));
+        return out;
     }
 
     //Check of breaking/building
