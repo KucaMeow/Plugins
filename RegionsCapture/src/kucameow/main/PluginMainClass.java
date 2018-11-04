@@ -9,13 +9,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import kucameow.main.handlers.*;
-//import kucameow.main.commands.*;
 
 public class PluginMainClass extends JavaPlugin{
 
     public File regionsF;
 
-    public Logger log = Logger.getLogger("Minecraft");
+    public static Logger log = Logger.getLogger("Minecraft");
 
     public void onEnable() {
 
@@ -29,21 +28,19 @@ public class PluginMainClass extends JavaPlugin{
         }
 
         for (Player p : Bukkit.getOnlinePlayers()){
-            RegionHandler.areas.put(p, new Area(0,0,0,0,0,0));
+            LocationPicker.locs.put(p, null);
         }
 
         log.warning("\n\nInitialisation of RegionCapture plugin started");
         //Initialisation:
         Bukkit.getPluginManager().registerEvents(new MainHandler(this), this);
         Bukkit.getPluginManager().registerEvents(new RegionHandler(this), this);
+        Bukkit.getPluginManager().registerEvents(new LocationPicker(this), this);
+        Bukkit.getPluginManager().registerEvents(new RegionBreaking(this), this);
         getCommand("cr").setExecutor(new RegionCreator(this));
         log.warning("\n\nInitialisation of RegionCapture plugin finished. Plugin works now\n");
     }
     public void onDisable(){
-        log.severe("PLUGIN SOMEHOW WAS STOPPED");
-        log.severe("PLUGIN SOMEHOW WAS STOPPED");
-        log.severe("PLUGIN SOMEHOW WAS STOPPED");
-        log.severe("PLUGIN SOMEHOW WAS STOPPED");
         log.severe("PLUGIN SOMEHOW WAS STOPPED");
     }
 }

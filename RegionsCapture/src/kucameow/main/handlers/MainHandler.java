@@ -1,15 +1,16 @@
 package kucameow.main.handlers;
 
-import org.apache.logging.log4j.core.config.plugins.Plugin;
+import kucameow.main.filesystem.PlayerInfoMessages;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.*;
+
+import java.util.List;
 
 public class MainHandler implements Listener {
     private kucameow.main.PluginMainClass plugin;
@@ -20,16 +21,36 @@ public class MainHandler implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
-        if(RegionHandler.areas.get(event.getPlayer()) == null){
-            RegionHandler.areas.put(event.getPlayer(), new Area(0,0,0,0,0,0));
+        if(LocationPicker.locs.get(event.getPlayer()) == null){
+            LocationPicker.locs.put(event.getPlayer(), null);
         }
         event.getPlayer().sendMessage("" + ChatColor.DARK_AQUA + ChatColor.BOLD + "На этом севрере работает плагин захвата территорий. Для справки введите /rc help");
     }
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event){
-        if(RegionHandler.areas.get(event.getPlayer()) != null){
-            RegionHandler.areas.remove(event.getPlayer());
+        if(LocationPicker.locs.get(event.getPlayer()) != null){
+            LocationPicker.locs.remove(event.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void checkRegion(PlayerInteractEvent event){
+        if(event.getPlayer().getItemInHand().getType() != Material.APPLE || event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
+        FileConfiguration r = YamlConfiguration.loadConfiguration(plugin.regionsF);
+
+        List<String> regs = r.getStringList("name");
+        for (String s : regs){
+            List<String> c = r.getStringList("reg." + s);
+            if(
+                    event.getClickedBlock().getX() <= Integer.parseInt(c.get(0)) + Integer.parseInt(c.get(3)) && event.getClickedBlock().getX() >= Integer.parseInt(c.get(0)) - Integer.parseInt(c.get(3))
+                    &&
+                    event.getClickedBlock().getZ() <= Integer.parseInt(c.get(2)) + Integer.parseInt(c.get(3)) && event.getClickedBlock().getZ() >= Integer.parseInt(c.get(2)) - Integer.parseInt(c.get(3))
+            ){
+                PlayerInfoMessages.giveRegionInfo(event.getPlayer(), s, plugin);
+                return;
+            }
         }
     }
 }
