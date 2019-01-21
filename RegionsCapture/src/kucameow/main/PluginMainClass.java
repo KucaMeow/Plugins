@@ -4,40 +4,28 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import kucameow.main.commands.RegionCreator;
+import kucameow.main.commands.CreateRegion;
+import kucameow.main.commands.Debug;
+import kucameow.main.filesystem.FileCreator;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import kucameow.main.handlers.*;
 
 public class PluginMainClass extends JavaPlugin{
-
-    public File regionsF;
+    /**
+     * Main plugin class with initialisation and so on
+     */
 
     public static Logger log = Logger.getLogger("Minecraft");
 
     public void onEnable() {
-
-        regionsF = new File(getDataFolder() + File.separator + "regions.yml");
-        if(!regionsF.exists()){
-            try {
-                regionsF.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (Player p : Bukkit.getOnlinePlayers()){
-            LocationPicker.locs.put(p, null);
-        }
-
         log.warning("\n\nInitialisation of RegionCapture plugin started");
         //Initialisation:
         Bukkit.getPluginManager().registerEvents(new MainHandler(this), this);
-        Bukkit.getPluginManager().registerEvents(new RegionHandler(this), this);
-        Bukkit.getPluginManager().registerEvents(new LocationPicker(this), this);
-        Bukkit.getPluginManager().registerEvents(new RegionBreaking(this), this);
-        getCommand("cr").setExecutor(new RegionCreator(this));
+        //FileCreator.CreateRegionFile("Test", this, new Location(getServer().getWorlds().get(0), 0, 0, 0));
+        getCommand("cr").setExecutor(new CreateRegion(this));
+        getCommand("crinfo").setExecutor(new Debug(this));
         log.warning("\n\nInitialisation of RegionCapture plugin finished. Plugin works now\n");
     }
     public void onDisable(){
