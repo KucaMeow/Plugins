@@ -13,7 +13,7 @@ public class FileCreator {
         File file = new File(pl.getDataFolder() + File.separator + name + ".yml");
         if(file.exists()){
             PluginMainClass.log.warning("Region's already exist");
-            //return;
+            return;
         }
         else {
             try {
@@ -39,7 +39,7 @@ public class FileCreator {
 
         temp = new ArrayList<>();
         temp.add("" + (loc.getBlockY() - 1));
-        fileC.set("y", temp);
+        fileC.set("Y", temp);
 
         temp = new ArrayList<>();
         temp.add("" + loc.getChunk().getZ());
@@ -52,6 +52,30 @@ public class FileCreator {
         PluginMainClass.log.info("Region file " + name + " created");
         try {
             fileC.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        File regions = new File(pl.getDataFolder() + File.separator + "regions.yml");
+        if(!regions.exists()){
+            try {
+                regions.createNewFile();
+                YamlConfiguration.loadConfiguration(regions).set("regions", new ArrayList<String>());
+                YamlConfiguration.loadConfiguration(regions).save(regions);
+                PluginMainClass.log.info("regions.yml created");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        FileConfiguration regs = YamlConfiguration.loadConfiguration(regions);
+
+        temp = (ArrayList<String>) regs.getStringList("regions");
+        temp.add(name);
+        regs.set("regions", temp);
+        try {
+            regs.save(regions);
         } catch (IOException e) {
             e.printStackTrace();
         }

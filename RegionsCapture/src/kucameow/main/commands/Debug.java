@@ -2,8 +2,6 @@ package kucameow.main.commands;
 
 import kucameow.main.PluginMainClass;
 import kucameow.main.tools.ChunkTweaks;
-import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,7 +17,8 @@ public class Debug implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        ChunkTweaks.createChunkBorder(Material.GLOWSTONE, ((Player) commandSender).getLocation());
+        //Bukkit.getScheduler().runTaskAsynchronously(pl, new XPShower((Player)commandSender, Integer.parseInt(strings[0])));
+        ChunkTweaks.getNearestChunkFromRegion((Player)commandSender, PluginMainClass.regions.get("Test"), pl);
         return true;
     }
 }

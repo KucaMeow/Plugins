@@ -8,18 +8,22 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class Region {
-    int budget;
-    int x, z, y;
-    boolean[][] chunks = new boolean[5][5];
+    public int budget;
+    public int x, z, y;
+    public boolean[][] chunks = new boolean[5][5];
 
     public Region(String name, PluginMainClass pl){
         File reg = new File(pl.getDataFolder() + File.separator + name + ".yml");
         FileConfiguration file = YamlConfiguration.loadConfiguration(reg);
 
-        budget = Integer.parseInt(file.getStringList("Budget").get(0));
-        x = Integer.parseInt(file.getStringList("X").get(0));
-        y = Integer.parseInt(file.getStringList("Y").get(0));
-        z = Integer.parseInt(file.getStringList("Z").get(0));
+        PluginMainClass.log.info(file.getString("Budget"));
+        PluginMainClass.log.info(file.getString("X"));
+        PluginMainClass.log.info(file.getString("Y"));
+        PluginMainClass.log.info(file.getString("Z"));
+        budget = Integer.parseInt(file.getString("Budget").substring(1, file.getString("Budget").length()-1));
+        x = Integer.parseInt(file.getString("X").substring(1, file.getString("X").length()-1));
+        y = Integer.parseInt(file.getString("Y").substring(1, file.getString("Y").length()-1));
+        z = Integer.parseInt(file.getString("Z").substring(1, file.getString("Z").length()-1));
 
         ArrayList<String> temp = (ArrayList<String>) file.getStringList("Chunks");
         for(int i = 0; i < 5; i++){
