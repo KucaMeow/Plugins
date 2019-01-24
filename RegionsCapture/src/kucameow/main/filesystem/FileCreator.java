@@ -1,6 +1,7 @@
 package kucameow.main.filesystem;
 
 import kucameow.main.PluginMainClass;
+import kucameow.main.storage.Region;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.*;
 
@@ -33,21 +34,21 @@ public class FileCreator {
         temp.add("xxxxx");
         fileC.set("Chunks", temp);
 
-        temp = new ArrayList<>();
-        temp.add("" + loc.getChunk().getX());
-        fileC.set("X", temp);
+        //temp = new ArrayList<>();
+        //temp.add("" + loc.getChunk().getX());
+        fileC.set("X", loc.getChunk().getX());
 
-        temp = new ArrayList<>();
-        temp.add("" + (loc.getBlockY() - 1));
-        fileC.set("Y", temp);
+        //temp = new ArrayList<>();
+        //temp.add("" + (loc.getBlockY() - 1));
+        fileC.set("Y", (loc.getBlockY() - 1));
 
-        temp = new ArrayList<>();
-        temp.add("" + loc.getChunk().getZ());
-        fileC.set("Z", temp);
+        //temp = new ArrayList<>();
+        //temp.add("" + loc.getChunk().getZ());
+        fileC.set("Z", loc.getChunk().getZ());
 
-        temp = new ArrayList<>();
-        temp.add("0");
-        fileC.set("Budget", temp);
+        //temp = new ArrayList<>();
+        //temp.add("0");
+        fileC.set("Budget", 0);
 
         PluginMainClass.log.info("Region file " + name + " created");
         try {
@@ -79,5 +80,6 @@ public class FileCreator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        PluginMainClass.regions.put(name, new Region(name, pl));
     }
 }

@@ -1,11 +1,17 @@
 package kucameow.main.commands;
 
 import kucameow.main.PluginMainClass;
-import kucameow.main.tools.ChunkTweaks;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Debug implements CommandExecutor {
 
@@ -17,8 +23,6 @@ public class Debug implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        //Bukkit.getScheduler().runTaskAsynchronously(pl, new XPShower((Player)commandSender, Integer.parseInt(strings[0])));
-        ChunkTweaks.getNearestChunkFromRegion((Player)commandSender, PluginMainClass.regions.get("Test"), pl);
-        return true;
+        return false;
     }
 }
