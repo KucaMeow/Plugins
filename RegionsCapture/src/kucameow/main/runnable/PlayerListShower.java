@@ -1,9 +1,13 @@
 package kucameow.main.runnable;
 
+import kucameow.main.PluginMainClass;
 import kucameow.main.storage.Region;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+/**
+ * Поток показывающий захватчикам их количество и ники союзников
+ */
 public class PlayerListShower implements Runnable{
     Player player;
     Region region;
@@ -31,5 +35,6 @@ public class PlayerListShower implements Runnable{
             }
 
         }
+        player.sendTitle(ChatColor.DARK_AQUA + "Захват займет " + region.capture.time + " секунд", "", 10, 10, 10);
     }
 }

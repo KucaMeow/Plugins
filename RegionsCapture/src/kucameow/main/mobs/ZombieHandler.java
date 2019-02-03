@@ -1,6 +1,7 @@
 package kucameow.main.mobs;
 
 import kucameow.main.PluginMainClass;
+import kucameow.main.filesystem.FileCreator;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -13,6 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Слушатель для зомби, задающий ему нужные свойства
+ */
 public class ZombieHandler implements Listener {
 
     private int health, money;
@@ -20,56 +24,47 @@ public class ZombieHandler implements Listener {
 
     public ZombieHandler(PluginMainClass pl){
         File file = new File(pl.getDataFolder() + File.separator + "mobs" + File.separator + "zombie.yml");
+        if(!file.exists()) FileCreator.createZombieFile(pl);
         FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        if(!file.exists()) {
-            try {
-                file.createNewFile();
-                configuration.set("HP", 300);
-                configuration.set("Money", 50);
-                ArrayList<String> temp = new ArrayList<String>();
-                temp.add("this is spawn coords:");
-                configuration.set("Coords", temp);
-                configuration.save(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         this.pl = pl;
         health = configuration.getInt("HP");
         money = configuration.getInt("Money");
 
     }
 
+    /**
+     * Задает нужные параметры при спавне зомби
+     * @param event Спавн моба
+     */
     @EventHandler
     public void zombieSpawn (EntitySpawnEvent event){
         if(event.getEntityType() != EntityType.ZOMBIE) return;
 
         Entity entity = event.getEntity();
-        entity.setCustomName("" + ChatColor.BOLD + ChatColor.RED + "Zombie");
         entity.setCustomNameVisible(true);
         ((Zombie) entity).setMaxHealth(health);
         ((Zombie) entity).setHealth(health);
+        event.getEntity().setCustomName(("" + ChatColor.RED + ChatColor.BOLD + "Zombie " + ChatColor.DARK_RED + ChatColor.BOLD  + (int)((Zombie)event.getEntity()).getHealth()).trim());
         ((Zombie) entity).setCanPickupItems(false);
         entity.setFireTicks(0);
         entity.setInvulnerable(false);
         ((Zombie) entity).setRemoveWhenFarAway(false);
     }
 
+    /**
+     * Меняет имя зомби, добавляя ему текущее здоровье
+     * @param event Моб получил урон
+     */
     @EventHandler
     public void zombieHit (EntityDamageEvent event){
         if(!(event.getEntity() instanceof Zombie)) return;
-        event.getEntity().setCustomName("" + ChatColor.BOLD + ChatColor.RED + "Zombie " + (int)((Zombie)event.getEntity()).getHealth());
-        event.getEntity().setInvulnerable(false);
+        event.getEntity().setCustomName(("" + ChatColor.RED + ChatColor.BOLD + "Zombie " + ChatColor.DARK_RED + ChatColor.BOLD  + (int)((Zombie)event.getEntity()).getHealth()).trim());
     }
 
-    @EventHandler
-    public void zombieFire (EntityCombustEvent event){
-        if(event.getEntity() instanceof Monster){
-            event.setCancelled(true);
-        }
-    }
-
+    /**
+     * Добавляет денег клану игрока, убившего зомби
+     * @param event Смерть моба
+     */
     @EventHandler
     public void zombieDie (EntityDeathEvent event){
         if(event.getEntityType() != EntityType.ZOMBIE) return;

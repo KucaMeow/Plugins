@@ -4,6 +4,9 @@ import kucameow.main.storage.Region;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+/**
+ * Поток, отображающий защищаюсимся список захватчиков
+ */
 public class EnemiesListShower implements Runnable {
     Player player;
     Region region;

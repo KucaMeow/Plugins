@@ -1,3 +1,20 @@
 name: RegionCapture
 main: kucameow.main.PluginMainClass
-version: 1.0
+version: 1.1
+commands:
+  cr:
+    info: Создание региона
+    usage: /cr <название>
+  crdeb:
+  zombiespawnpoint:
+    info: Создание точки спавна зомби
+    usage: /zombiespawnpoint
+  changeplayerclan:
+    info: Смена клана у игрока
+    usage: /changeplayerclan Player Clan
+  addmoney:
+    info: Добавить золото клану
+    usage: /addmoney Clan Gold
+  crconfig:
+    info: Обновляет конфиги
+    usage: /crconfig

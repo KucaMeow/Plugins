@@ -1,8 +1,12 @@
 package kucameow.main.runnable;
 
+import kucameow.main.PluginMainClass;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 
+/**
+ * Вспомогательный поток, спавнящий моба
+ */
 public class SpawnMob implements Runnable {
 
     EntityType entityType;
